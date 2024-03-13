@@ -140,7 +140,7 @@ MODEL_CARD_HTML_TEMPLATE = """
   </div>
 </div>
 <div class="footer">
-    <p>© {year} Herramienta de model card diseñada por GobLab. Todos los derechos reservados.</p>
+    <p>© {year} Herramienta de transparencia de modelo diseñada por GobLab. Todos los derechos reservados.</p>
     <p>Elaborado en {elaboration_date}.</p>
 </div>
 </body>

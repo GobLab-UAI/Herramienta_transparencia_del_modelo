@@ -46,7 +46,7 @@ def preparar_seccion_html(clave, valor, prefijo="", sufijo=""):
 def verificar_campos_obligatorios():
     campos_obligatorios =[
                     "nombre_modelo","desarrollador_modelo","fecha_modelo","tipo_modelo",
-                    "proposito_modelo","UsoPrevisto_modelo","TA_classModelo_categorias",
+                    "proposito_modelo","UsoPrevisto_modelo",
                     "metricas_modelo","umbralDesicion_modelo","datos_modelo","preprocesamiento_modelo",
                     "conjunto_datos_eval_modelo","preprocesamiento_evaluacion","TA_modelo_categoriza",
                     "TA_datos_personales","dato_sensible","asuntos_centrales_modelo","TA_reclamacion"
