@@ -71,7 +71,7 @@ MODEL_CARD_HTML_TEMPLATE = """
         {TA_porque_modelo_line}
         {TA_alcanzar_resultados_line}
         <li>Uso previsto del modelo: {UsoPrevisto_modelo}</li>
-        <li>{UsosNocontext_modelo}</li>
+        {UsosNocontext_modelo_line}
       </ul>
 
       <!-- Este es el render de TA que está pendiente para agregar-->
