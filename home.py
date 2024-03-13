@@ -1,4 +1,3 @@
-import streamlit as st
 
 import streamlit as st
 import smtplib
@@ -8,12 +7,43 @@ from email.message import EmailMessage
 from rendering import generate_pdf, download_button
 from template import MODEL_CARD_HTML_TEMPLATE
 
+import uuid
+from database import client, DB_NAME, COLLECTION_NAME
+
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
+
+feedback_collection = db["feedback"]
+
 class SafeDict(dict):
     def __missing__(self, key):
         return ''
 
 # TODO: Tengo que colocar los botones para siguiente tab dentro de cada tab (que del tab0 pase al tab1 y así sucesivamente)
-    
+
+# Función para guardar los datos en MongoDB
+def guardar_en_mongodb_feedback(datos):
+    try:
+        # Generar un identificador único para este documento
+        datos["_id"] = str(uuid.uuid4())
+        # Insertar el documento en la colección
+        feedback_collection.insert_one(datos)
+        st.sidebar.success("Feedback registrado con éxito.")
+    except Exception as e:
+        st.sidebar.error("Error al guardar feedback en base de datos")
+
+
+# Función para guardar los datos en MongoDB
+def guardar_en_mongodb(datos):
+    try:
+        # Generar un identificador único para este documento
+        datos["_id"] = str(uuid.uuid4())
+        # Insertar el documento en la colección
+        collection.insert_one(datos)
+        st.success("Datos guardados con éxito.")
+    except Exception as e:
+        st.error(f"Error al guardar en la base de datos: {e}")
+
 # Método para enviar un correo electrónico
 def send_feedback_email(feedback):
     try:
@@ -31,6 +61,7 @@ def send_feedback_email(feedback):
             smtp.login('jspinad@gmail.com', 'caar kfqv zjoo isfn')
             smtp.sendmail("jspinad@gmail.com","goblab@uai.cl",msg.as_string())
         
+        guardar_en_mongodb_feedback({"feedback": feedback})
         st.success("¡Feedback enviado con éxito!")
     except Exception as e:
         st.error("Error al enviar el feedback.")
@@ -56,7 +87,6 @@ def verificar_campos_obligatorios():
         if campo not in questions or questions[campo] == "" or questions[campo] is None:
             return campo
     return "all"
-
 
 st.sidebar.title("Feedback")
 # Crea un formulario para el feedback
@@ -94,6 +124,11 @@ with tab1:
     questions["desarrollador_modelo"] = st.text_area("2.¿Qué persona u organización desarrolló el modelo? :red[`*`]", placeholder=" Esto puede ser utilizado por todas las partes interesadas para inferir detalles relacionados con el desarrollo del modelo y posibles conflictos de interés.",max_chars=SHORT_STRING)#Obligatorio
     questions["version_modelo"] = st.text_input("3.¿Cuál es la versión del modelo?¿Han existido versiones anteriores?", placeholder="Versión del modelo y número de versiones",max_chars=SHORT_STRING)
     questions["fecha_modelo"] = st.date_input("4.¿Cuándo se desplegó o implementó este modelo? Esto es útil para que todas las partes interesadas se informen sobre las técnicas y fuentes de datos que probablemente estuvieron disponibles durante el desarrollo del modelo :red[`*`].", value=None) #Obligatorio
+    if questions["fecha_modelo"] is not None:
+        questions["fecha_modelo"] = questions["fecha_modelo"].strftime("%d/%m/%Y")
+    else:
+        questions["fecha_modelo"] = ""
+
     questions["tipo_modelo"] = st.text_area("5.¿Qué tipo de modelo es? :red[`*`]", placeholder="Esto incluye detalles básicos de la arquitectura del modelo, como si es un clasificador de Naive Bayes, una Red Neuronal Convolucional, etc. Esto es probablemente relevante para desarrolladores de software y modelos, así como para personas conocedoras de aprendizaje automático, para resaltar qué tipos de suposiciones están codificadas en el sistema.",max_chars=LONG_STRING) #Obligatorio
 
     questions["link_modelo"] = st.text_input("6.¿Dónde se pueden encontrar recursos para obtener más información?", placeholder="Por ejemplo, link a la página institucional",max_chars=LONG_STRING)
@@ -271,6 +306,8 @@ if submitted:
             st.success("Model Card generada con éxito.")
             # Botón de descarga
             download_button(pdf, "model_card.pdf", "Descargar Model Card en PDF")
+
+            guardar_en_mongodb(questions)
 
         except Exception as e:
             st.error("Error al generar la Model Card, intentelo más tarde.")
