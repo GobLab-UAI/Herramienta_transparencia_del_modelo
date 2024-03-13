@@ -82,9 +82,9 @@ st.write("Estás listo? 🔜")
 
 questions = {}
 
-tab1, tab2 = st.tabs(["Detalles del modelo 📄", "Visión general 👁️"])
-tab3, tab4, tab5, tab6 = st.tabs(["Clasificación ☯", "Métricas de rendimiento 📈", "Datos de entrenamiento 💿", "Datos de evaluación 🧪"])
-tab8, tab9, tab10 = st.tabs(["Consideraciones éticas 🧠", "Advertencias y recomendaciones ⚠️", "Reclamación 🚨"])
+tab1, tab2 = st.tabs(["1.Detalles del modelo 📄", "2.Visión general 👁️"])
+tab3, tab4, tab5, tab6 = st.tabs(["3.Clasificación ☯", "4.Métricas de rendimiento 📈", "5.Datos de entrenamiento 💿", "6.Datos de evaluación 🧪"])
+tab8, tab9, tab10 = st.tabs(["7.Consideraciones éticas 🧠", "8.Advertencias y recomendaciones ⚠️", "9.Reclamación 🚨"])
 
 
 with tab1:
