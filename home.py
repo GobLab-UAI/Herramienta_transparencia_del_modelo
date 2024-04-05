@@ -101,8 +101,20 @@ with st.sidebar.form(key='feedback_form'):
 SHORT_STRING = 100
 LONG_STRING = 1000
 
+col1, col2, col3 = st.columns(3)
+
+# Mostrar la primera imagen en la primera columna
+with col1:
+    st.write("")
+    st.image("_statics/logo_algoritmosEticos.jpg")
+with col2:
+    st.image("_statics/Goblab.png")
+# Mostrar la segunda imagen en la segunda columna
+with col3:
+    st.image("_statics/UAI.png")
+
 title = "Ficha de transparencia del modelo 🧠🪟"
-st.markdown(f"<h3 style='text-align: left; color: black;'>V.0.0.1</h3>", unsafe_allow_html=True)
+st.markdown(f"<h3 style='text-align: left; color: black;'>V.1.0.0</h3>", unsafe_allow_html=True)
 st.markdown(f"<h1 style='text-align: center; color: black;'>{title}</h1>", unsafe_allow_html=True)
 
 
@@ -311,4 +323,10 @@ if submitted:
 
         except Exception as e:
             st.error("Error al generar la Model Card, intentelo más tarde.")
-            
+
+st.sidebar.title("Agradecimientos")
+st.sidebar.write("ANID + Subdirección de Investigación Aplicada/Concurso IDeA I+D 2023 + ID23I10357")
+# Dividir la página en dos columnas
+st.sidebar.subheader("Una iniciativa en colaboración con:")
+st.sidebar.image("_statics/ANID.png",width=100)
+st.sidebar.image("_statics/BidLab.png",width=100)
