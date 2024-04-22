@@ -18,7 +18,7 @@ git clone
 Luego, se debe crear un ambiente virtual en python e instalar las dependencias necesarias. Para ello, se debe ejecutar el siguiente comando:
 
 ```bash
-cd model_card_prototype
+cd Herrramienta_transparencia_del_modelo
 python -m venv .venv
 source .venv/bin/activate
 
