@@ -114,12 +114,9 @@ with col2:
 with col3:
     st.image("_statics/UAI.png")
 
-title = "Ficha de transparencia del modelo 🧠🪟"
+title = "Ficha de transparencia"
 st.markdown(f"<h3 style='text-align: left; color: black;'>V.2.0.0</h3>", unsafe_allow_html=True)
 st.markdown(f"<h1 style='text-align: center; color: black;'>{title}</h1>", unsafe_allow_html=True)
-
-
-st.write("Bienvenido a la herramienta para crear una ficha de transparencia del modelo. Para esto vamos a requerir algunos datos de tu modelo.")
 
 st.write("""La presente herramienta es un apoyo para la elaboración de una ficha de transparencia para sistemas de decisiones automatizadas o semiautomatizadas (SDA), con el propósito de ayudar a los organismos públicos a cumplir con los estándares de transparencia algorítmica de sus sistemas. 
          
