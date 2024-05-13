@@ -1,5 +1,6 @@
 
 import streamlit as st
+from datetime import datetime
 import smtplib
 import ssl
 from email.message import EmailMessage
@@ -76,9 +77,9 @@ def preparar_seccion_html(clave, valor, prefijo="", sufijo=""):
 # Definir una función para verificar si todos los campos obligatorios están llenos
 def verificar_campos_obligatorios():
     campos_obligatorios =[
-                    "nombre_modelo","desarrollador_modelo","fecha_modelo","tipo_modelo",
+                    "nombre_modelo","desarrollador_modelo","tipo_modelo",
                     "proposito_modelo","UsoPrevisto_modelo",
-                    "metricas_modelo","umbralDesicion_modelo","datos_modelo","preprocesamiento_modelo",
+                    "metricas_modelo","datos_modelo","preprocesamiento_modelo",
                     "conjunto_datos_eval_modelo","preprocesamiento_evaluacion","TA_modelo_categoriza",
                     "TA_datos_personales","dato_sensible","asuntos_centrales_modelo","TA_reclamacion"
                     ]
@@ -114,56 +115,45 @@ with col3:
     st.image("_statics/UAI.png")
 
 title = "Ficha de transparencia del modelo 🧠🪟"
-st.markdown(f"<h3 style='text-align: left; color: black;'>V.1.0.0</h3>", unsafe_allow_html=True)
+st.markdown(f"<h3 style='text-align: left; color: black;'>V.2.0.0</h3>", unsafe_allow_html=True)
 st.markdown(f"<h1 style='text-align: center; color: black;'>{title}</h1>", unsafe_allow_html=True)
 
 
 st.write("Bienvenido a la herramienta para crear una ficha de transparencia del modelo. para esto vamos a requerir algunos datos de tu modelo.")
+
+st.write("""La presente herramienta es un apoyo para la elaboración de una ficha de transparencia para sistemas de decisiones automatizadas o semiautomatizadas (SDA), con el propósito de ayudar a los organismos públicos a cumplir con los estándares de transparencia algorítmica de sus sistemas. 
+         
+Está destinada para ser utilizada en SDA que hayan completado la fase de desarrollo y evaluación, antes de la fase de implementación de la solución. Para más información sobre las fases, consultar la Guía Permitido Innovar (https://www.lab.gob.cl/permitido-innovar).
+La ficha de transparencia es un documento que proporciona información relevante sobre la naturaleza, aspectos técnicos, funcionales y del proyecto del SDA. Desempeña un papel fundamental en la promoción de la transparencia, la rendición de cuentas y el uso ético de los algoritmos. La herramienta facilita la creación de esta ficha: ayuda a la identificación de la información relevante sobre el SDA que se debe transparentar y la presenta de manera clara, visible y comprensible tanto para los involucrados en el proceso institucional como para cualquier persona interesada.
+
+La herramienta consta de un total de 44 preguntas distribuidas en 9 secciones. Para completar adecuadamente todos los campos de la ficha, se requiere la participación de un equipo multidisciplinario de la institución, que incluya roles como el jefe de proyecto, analista de datos, responsable de datos, equipo legal, y encargado de comunicaciones y todos los demás que considere la institución. 
+
+Todas las preguntas marcadas con un asterisco (:red[*]) son preguntas obligatorias. Al terminar de responder las preguntas, se debe marcar el botón **“descargar ficha”** para acceder a la ficha de transparencia en formato *PDF*. 
+    
+Durante el uso de la herramienta, la información no es almacenada por la plataforma, para resguardar la privacidad de los datos que sean ingresados en los campos.
+
+Esta herramienta se basa en el enfoque de Model Cards for Model Reporting (Mitchell, 2019). """)
+
 st.write("Estás listo? 🔜")
 
 
 questions = {}
 
-tab1, tab2 = st.tabs(["1.Detalles del modelo 📄", "2.Visión general 👁️"])
+tab1, tab2 = st.tabs(["1.Visión general 👁️", "2.Detalles del modelo 📄"])
 tab3, tab4, tab5, tab6 = st.tabs(["3.Clasificación ☯", "4.Métricas de rendimiento 📈", "5.Datos de entrenamiento 💿", "6.Datos de evaluación 🧪"])
 tab8, tab9, tab10 = st.tabs(["7.Consideraciones éticas 🧠", "8.Advertencias y recomendaciones ⚠️", "9.Reclamación 🚨"])
 
-
 with tab1:
-    st.header("Detalles del modelo 📄")
-
-    questions["nombre_modelo"] = st.text_input("1.Nombre del modelo :red[`*`]", max_chars=SHORT_STRING) #Obligatorio
-    questions["desarrollador_modelo"] = st.text_area("2.¿Qué persona u organización desarrolló el modelo? :red[`*`]", placeholder=" Esto puede ser utilizado por todas las partes interesadas para inferir detalles relacionados con el desarrollo del modelo y posibles conflictos de interés.",max_chars=SHORT_STRING)#Obligatorio
-    questions["version_modelo"] = st.text_input("3.¿Cuál es la versión del modelo?¿Han existido versiones anteriores?", placeholder="Versión del modelo y número de versiones",max_chars=SHORT_STRING)
-    questions["fecha_modelo"] = st.date_input("4.¿Cuándo se desplegó o implementó este modelo? Esto es útil para que todas las partes interesadas se informen sobre las técnicas y fuentes de datos que probablemente estuvieron disponibles durante el desarrollo del modelo :red[`*`].", value=None) #Obligatorio
-    if questions["fecha_modelo"] is not None:
-        questions["fecha_modelo"] = questions["fecha_modelo"].strftime("%d/%m/%Y")
-    else:
-        questions["fecha_modelo"] = ""
-
-    questions["tipo_modelo"] = st.text_area("5.¿Qué tipo de modelo es? :red[`*`]", placeholder="Esto incluye detalles básicos de la arquitectura del modelo, como si es un clasificador de Naive Bayes, una Red Neuronal Convolucional, etc. Esto es probablemente relevante para desarrolladores de software y modelos, así como para personas conocedoras de aprendizaje automático, para resaltar qué tipos de suposiciones están codificadas en el sistema.",max_chars=LONG_STRING) #Obligatorio
-
-    questions["link_modelo"] = st.text_input("6.¿Dónde se pueden encontrar recursos para obtener más información?", placeholder="Por ejemplo, link a la página institucional",max_chars=LONG_STRING)
-    questions["cita_modelo"] = st.text_area("7.¿Cómo debería citarse el modelo?", max_chars=LONG_STRING)
-    questions["licencia_modelo"] = st.text_input("8.¿Qué tipo de licencia tiene el modelo?", max_chars=SHORT_STRING)
-    questions["contacto_modelo"] = st.text_area("9.¿Hay alguna dirección de correo electrónico a la que las personas pueden escribir para obtener más información?", max_chars=LONG_STRING)
-
-    # Genera secciones HTML para cada sección si el valor no está vacío y si no son obligatorios
-
-    questions["link_modelo_line"] = preparar_seccion_html("Enlace", questions["link_modelo"], prefijo="<li>", sufijo="</li>")
-    questions["cita_modelo_line"] = preparar_seccion_html("¿Cómo citar?", questions["cita_modelo"], prefijo="<li>", sufijo="</li>")
-    questions["licencia_modelo_line"] = preparar_seccion_html("Licencia del modelo", questions["licencia_modelo"], prefijo="<li>", sufijo="</li>")
-    questions["contacto_modelo_line"] = preparar_seccion_html("Contacto", questions["contacto_modelo"], prefijo="<li>", sufijo="</li>")
-
-with tab2:
 
     st.header("Visión general del modelo 📊")
 
-    questions["proposito_modelo"] = st.text_area("10.Describa el propósito y funcionalidad del modelo :red[`*`]", max_chars=LONG_STRING) #Obligatorio
-    questions["TA_porque_modelo"] = st.text_area("11.*TA: ¿Por qué se utiliza el modelo para tomar decisiones y no otro mecanismo?* ", max_chars=LONG_STRING)
-    questions["TA_alcanzar_resultados"] = st.text_area("12.*TA: ¿Cómo el modelo alcanza u obtiene sus resultados?*",placeholder="Describa el flujo de funciomaiento de su sistema para generar un resultado" , max_chars=LONG_STRING)
-    questions["UsoPrevisto_modelo"] = st.text_area("13.¿Cuál es el uso previsto y las expectativas del usuario? :red[`*`]", placeholder="Esta sección detalla si el modelo se desarrolló con tareas generales o específicas en mente. Los casos de uso pueden estar definidos de manera amplia o estrecha según lo que los desarrolladores pretendan. Por ejemplo, si el modelo se construyó simplemente para etiquetar imágenes, esta tarea debería indicarse como el caso de uso principal previsto.", max_chars=LONG_STRING) #Obligatorio
-    questions["UsosNocontext_modelo"] = st.text_area("14.¿Qué usos están fuera del alcance del modelo?", placeholder="Aquí, la ficha del modelo debería resaltar la tecnología con la que el modelo podría confundirse fácilmente, o contextos relacionados a los que los usuarios podrían intentar aplicar el modelo.", max_chars=LONG_STRING)
+    questions["nombre_modelo"] = st.text_input("1.Nombre del modelo :red[*]", max_chars=SHORT_STRING) #Obligatorio
+    questions["tipo_modelo"] = st.text_area("2.¿Qué tipo de modelo es? :red[*] :red[antes 5]", placeholder="Esto incluye detalles básicos de la arquitectura del modelo, como si es un clasificador de Naive Bayes, una Red Neuronal Convolucional, etc. Esto es probablemente relevante para desarrolladores de software y modelos, así como para personas conocedoras de aprendizaje automático, para resaltar qué tipos de suposiciones están codificadas en el sistema.",max_chars=LONG_STRING) #Obligatorio
+    questions["proposito_modelo"] = st.text_area("3.Describa el propósito y funcionalidad del modelo :red[*] :red[antes 10]", max_chars=LONG_STRING) #Obligatorio
+    questions["TA_porque_modelo"] = st.text_area("4.*¿Por qué se decidió utilizar este SDA en lugar de otro tipo de solución?* :red[antes 11]", max_chars=LONG_STRING)
+    questions["TA_alcanzar_resultados"] = st.text_area("5.*¿Cómo el modelo alcanza u obtiene sus resultados?* :red[antes 12]",placeholder="Describa el flujo de funciomaiento de su sistema para generar un resultado" , max_chars=LONG_STRING)
+    questions["UsoPrevisto_modelo"] = st.text_area("6.¿Cuál es el uso previsto del 'modelo'? :red[*] :red[antes 13]", placeholder="¿Qué puede esperar el usuario directo del modelo al emplearlo?. Esta sección detalla si el modelo se desarrolló con tareas generales o específicas en mente. Los casos de uso pueden estar definidos de manera amplia o estrecha según lo que los desarrolladores pretendan. Por ejemplo, si el modelo se construyó simplemente para etiquetar imágenes, esta tarea debería indicarse como el caso de uso principal previsto.", max_chars=LONG_STRING) #Obligatorio
+    questions["UsosNocontext_modelo"] = st.text_area("7.¿Qué usos están fuera del alcance del modelo? :red[antes 14]", placeholder="Aquí, la ficha del modelo debería resaltar la tecnología con la que el modelo podría confundirse fácilmente, o contextos relacionados a los que los usuarios podrían intentar aplicar el modelo.", max_chars=LONG_STRING)
 
     # Genera secciones HTML para cada sección si el valor no está vacío
 
@@ -172,9 +162,37 @@ with tab2:
     
     questions["UsosNocontext_modelo_line"] = preparar_seccion_html("Usos fuera del alcance del modelo", questions["UsosNocontext_modelo"], prefijo="<li>", sufijo="</li>")
 
+
+with tab2:
+    st.header("Detalles del modelo 📄")
+
+    
+    questions["desarrollador_modelo"] = st.text_area("8.¿Qué persona u organización desarrolló el modelo? :red[*] :red[antes 2]", placeholder=" Esto puede ser utilizado por todas las partes interesadas para inferir detalles relacionados con el desarrollo del modelo y posibles conflictos de interés.",max_chars=SHORT_STRING)#Obligatorio
+    questions["version_modelo"] = st.text_input("9.¿Cuál es la versión del modelo? :red[antes 3]", placeholder="Describa el número de la versión del modelo. Ej: 1.0.0",max_chars=SHORT_STRING)
+    questions["fecha_modelo"] = st.date_input("10.¿Cuándo se desplegó o implementó este modelo? :red[antes 4] Esto es útil para que todas las partes interesadas se informen sobre las técnicas y fuentes de datos que probablemente estuvieron disponibles durante el desarrollo del modelo.", value=None) #Obligatorio
+    if questions["fecha_modelo"] is not None: #TODO: Revisar el render de la pregunta ya que no es obligatoria
+        questions["fecha_modelo"] = questions["fecha_modelo"].strftime("%d/%m/%Y")
+    else:
+        questions["fecha_modelo"] = ""
+
+    
+
+    questions["link_modelo"] = st.text_input("11.¿Dónde se pueden encontrar recursos para obtener información adicional del proyecto? :red[antes 6]", placeholder="Por ejemplo, link a la página institucional",max_chars=LONG_STRING)
+    questions["cita_modelo"] = st.text_area("12.¿Cómo debería citarse el modelo? :red[antes 7]", max_chars=LONG_STRING)
+    questions["licencia_modelo"] = st.text_input("13.¿Qué tipo de licencia tiene el modelo? :red[antes 8]", max_chars=SHORT_STRING)
+    questions["contacto_modelo"] = st.text_area("14.¿Hay algún canal de reclamos o sugerencias mediante los cuales las personas puedan solicitar más información? :red[antes 9]", max_chars=LONG_STRING)
+
+    # Genera secciones HTML para cada sección si el valor no está vacío y si no son obligatorios
+
+    questions["link_modelo_line"] = preparar_seccion_html("Enlace", questions["link_modelo"], prefijo="<li>", sufijo="</li>")
+    questions["cita_modelo_line"] = preparar_seccion_html("¿Cómo citar?", questions["cita_modelo"], prefijo="<li>", sufijo="</li>")
+    questions["licencia_modelo_line"] = preparar_seccion_html("Licencia del modelo", questions["licencia_modelo"], prefijo="<li>", sufijo="</li>")
+    questions["contacto_modelo_line"] = preparar_seccion_html("Contacto", questions["contacto_modelo"], prefijo="<li>", sufijo="</li>")
+
+
 with tab3:
-    st.header("TA: Clasificación ☯")
-    questions["TA_classModelo"] = st.radio("15.TA: ¿Es el modelo de clasificación?",options=["Sí","No"],index=1)
+    st.header("  Clasificación ☯")
+    questions["TA_classModelo"] = st.radio("15.  ¿Es el modelo de clasificación?",options=["Sí","No"],index=1)
     questions["TA_classModelo_categorias"] = None
     questions["TA_classModel_metodologia"] = None
     questions["TA_classModelo_efecto_variables"] = None
@@ -183,12 +201,12 @@ with tab3:
     if questions["TA_classModelo"] == "Sí":
         questions["TA_classModelo_visible"] = ""
         #Obligatorios
-        questions["TA_classModelo_categorias"] = st.text_area("16.TA: ¿Qué perfiles o categorías asigna o existen? :red[`*`]", max_chars=SHORT_STRING)#Obligatorio
+        questions["TA_classModelo_categorias"] = st.text_area("16.  ¿Qué perfiles o categorías asigna o existen? :red[*]", max_chars=SHORT_STRING)#Obligatorio
         
         #Opcionales
         questions["TA_classModel_metodologia"] = st.text_area("17.¿Qué forma, metodología o mecanismo usa el modelo para clasificar los datos? ¿Cuáles son los umbrales de decisión?", max_chars=SHORT_STRING)
-        questions["TA_classModelo_efecto_variables"] = st.text_area("18.TA: ¿Qué efecto tiene cada variable o parámetro en la asignación de categoría, etiqueta, perfil o posición?", max_chars=SHORT_STRING)
-        questions["TA_classModelo_relevancia_categoria"] = st.text_area("19.TA: ¿Por qué la categoría, perfil o prioridad es relevante para que el modelo alcance sus resultados?", max_chars=LONG_STRING)
+        questions["TA_classModelo_efecto_variables"] = st.text_area("18.  ¿Qué efecto tiene cada variable o parámetro en la asignación de categoría, etiqueta, perfil o posición?", max_chars=SHORT_STRING)
+        questions["TA_classModelo_relevancia_categoria"] = st.text_area("19.  ¿Por qué la categoría, perfil o prioridad es relevante para que el modelo alcance sus resultados?", max_chars=LONG_STRING)
 
         questions["TA_classModel_metodologia_line"] = preparar_seccion_html("Mecanismo utilizado para clasificar datos", questions["TA_classModel_metodologia"], prefijo="<li>", sufijo="</li>")
         questions["TA_classModelo_efecto_variables_line"] = preparar_seccion_html("Efecto de las variables en la asignación de las categorías", questions["TA_classModelo_efecto_variables"], prefijo="<li>", sufijo="</li>")
@@ -199,8 +217,8 @@ with tab3:
 with tab4: 
     st.header("Métricas de rendimiento 📈")
     #Obligatorios
-    questions["metricas_modelo"] = st.text_area("20.¿Qué métricas utiliza para medir el rendimiento de su modelo? :red[`*`]", max_chars=LONG_STRING)
-    questions["umbralDesicion_modelo"] =  st.slider("21.¿Cuál es el umbral de decisión del modelo? :red[`*`]", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
+    questions["metricas_modelo"] = st.text_area("20.¿Qué métricas utiliza para medir el rendimiento de su modelo? :red[*]", max_chars=LONG_STRING)
+    questions["umbralDesicion_modelo"] =  st.slider("21.¿Cuál es el umbral de decisión del modelo?", min_value=0.0, max_value=1.0, value=0.5, step=0.1) #TODO: Revisar el render si no hay valor.
     #Opcionales
     questions["calculo_mediciones_modelo"] = st.text_area("22.¿Cómo se calculan las mediciones y estimaciones de estas métricas?", placeholder="Por ejemplo, esto puede incluir desviación estándar, varianza, intervalos de confianza o divergencia KL. También se deben incluir detalles sobre cómo se aproximan estos valores (por ejemplo, promedio de 5 ejecuciones, validación cruzada de 10 pliegues).", max_chars=LONG_STRING)
 
@@ -209,15 +227,15 @@ with tab4:
 with tab5:
     st.header("Datos de entrenamiento 💿")
     #Obligatorios
-    questions["datos_modelo"] = st.text_area("23.¿Qué datos se utilizaron para el entrenamiento del modelo? :red[`*`]", max_chars=LONG_STRING) 
-    questions["preprocesamiento_modelo"] = st.text_area("24.¿Se aplicaron pasos de pre-procesamiento o limpieza a los datos? ¿Cuáles? :red[`*`]", max_chars=LONG_STRING) 
+    questions["datos_modelo"] = st.text_area("23.¿Qué datos se utilizaron para el entrenamiento del modelo? :red[*]", max_chars=LONG_STRING) 
+    questions["preprocesamiento_modelo"] = st.text_area("24.¿Se aplicaron pasos de pre-procesamiento o limpieza a los datos? ¿Cuáles? :red[*]", max_chars=LONG_STRING) 
 
 with tab6:
     st.header("Datos de evaluación 🧪")
     
-    questions["conjunto_datos_eval_modelo"] = st.text_area("25.¿Qué conjuntos de datos se utilizaron para evaluar el modelo? :red[`*`]", max_chars=LONG_STRING) #Obligatoria
+    questions["conjunto_datos_eval_modelo"] = st.text_area("25.¿Qué conjuntos de datos se utilizaron para evaluar el modelo? :red[*]", max_chars=LONG_STRING) #Obligatoria
     questions["eleccion_evaluacion"] = st.text_area("26.¿Por qué se eligieron estos conjuntos de datos?", max_chars=LONG_STRING)
-    questions["preprocesamiento_evaluacion"] = st.text_area("27.¿Cómo se preprocesaron los datos para la evaluación? :red[`*`]", placeholder="(por ejemplo, tokenización de oraciones, recorte de imágenes, cualquier filtrado como eliminar imágenes sin caras)", max_chars=LONG_STRING) #Obligatoria
+    questions["preprocesamiento_evaluacion"] = st.text_area("27.¿Cómo se preprocesaron los datos para la evaluación? :red[*]", placeholder="(por ejemplo, tokenización de oraciones, recorte de imágenes, cualquier filtrado como eliminar imágenes sin caras)", max_chars=LONG_STRING) #Obligatoria
 
     questions["eleccion_evaluacion_line"] = preparar_seccion_html("<strong>Justificación de la elección del modelo</strong>", questions["eleccion_evaluacion"], prefijo="<p>", sufijo="</p>")
 
@@ -233,13 +251,13 @@ with tab6:
 with tab8:
     st.header("Consideraciones éticas 🧠")
 
-    questions["TA_modelo_categoriza"] = st.radio("30.TA: ¿El modelo categoriza o perfila a las personas? :red[`*`]",options=["Sí","No"]) #obligatorio
+    questions["TA_modelo_categoriza"] = st.radio("30.  ¿El modelo categoriza o perfila a las personas? :red[*]",options=["Sí","No"]) #obligatorio
     # Esta depende de la anterior
     if questions["TA_modelo_categoriza"] == "Sí":
-        questions["TA_razones_decision_negativa_personas"] = st.text_area("31.TA: ¿Qué circunstancias llevan a una decisión negativa respecto de la persona?", max_chars=LONG_STRING)
+        questions["TA_razones_decision_negativa_personas"] = st.text_area("31.  ¿Qué circunstancias llevan a una decisión negativa respecto de la persona?", max_chars=LONG_STRING)
         questions["TA_razones_decision_negativa_personas_line"] = preparar_seccion_html("Circunstancias de decisión negativa", questions["TA_razones_decision_negativa_personas"], prefijo="<p>", sufijo="</p>")
     
-    questions["TA_datos_personales"] = st.radio("32.TA: ¿El modelo utiliza datos personales? :red[`*`]",options=["Sí","No"]) #obligatorio
+    questions["TA_datos_personales"] = st.radio("32.  ¿El modelo utiliza datos personales? :red[*]",options=["Sí","No"]) #obligatorio
     questions["TA_razones_datos_personales"] = None
 
     if questions["TA_datos_personales"] == "Sí":
@@ -247,7 +265,7 @@ with tab8:
         questions["TA_razones_datos_personales_line"] = preparar_seccion_html("Datos personales utilizados: ", questions["TA_razones_datos_personales"], prefijo="<p>", sufijo="</p>")
     
 
-    questions["dato_sensible"] = st.radio("33.¿El modelo utiliza algún dato sensible (por ejemplo, clases protegidas)? :red[`*`]",options=["Sí","No"]) #obligatorio
+    questions["dato_sensible"] = st.radio("33.¿El modelo utiliza algún dato sensible (por ejemplo, ley antidiscriminación)? :red[*]",options=["Sí","No"]) #obligatorio
     questions["dato_sensible_tipo"] = None
 
     if questions["dato_sensible"] == "Sí":
@@ -255,14 +273,14 @@ with tab8:
         
         questions["dato_sensible_tipo_line"] = preparar_seccion_html("Datos sensibles utilizados: ", questions["dato_sensible_tipo"], prefijo="<p>", sufijo="</p>")
     
-    questions["asuntos_centrales_modelo"] = st.radio("34.¿Se pretende que el modelo informe decisiones sobre asuntos centrales para la vida o el florecimiento humano, como la salud o la seguridad? ¿O podría usarse de esa manera? :red[`*`]",options=["Sí","No"]) #obligatorio
+    questions["asuntos_centrales_modelo"] = st.radio("34.¿Se pretende que el modelo informe decisiones sobre asuntos centrales para la vida o el florecimiento humano, como la salud o la seguridad? ¿O podría usarse de esa manera? :red[*]",options=["Sí","No"]) #obligatorio
     questions["asuntos_centrales_tipo"] = None
 
     if questions["asuntos_centrales_modelo"] == "Sí":
-        questions["asuntos_centrales_tipo"] = st.text_area("34.1.¿Cuáles? :red[`*`]", max_chars=SHORT_STRING) #obligatorio
+        questions["asuntos_centrales_tipo"] = st.text_area("34.1.¿Cuáles? :red[*]", max_chars=SHORT_STRING) #obligatorio
         questions["asuntos_centrales_tipo_line"] = preparar_seccion_html("Asuntos centrales para la vida", questions["asuntos_centrales_tipo"], prefijo="<p>", sufijo="</p>")
     
-    questions["estrategias_mitigaciones_modelo"] = st.text_area("35.¿Qué estrategias de mitigación de riesgos se utilizaron durante el desarrollo del modelo? :red[`*`]", max_chars=LONG_STRING) #Opcional
+    questions["estrategias_mitigaciones_modelo"] = st.text_area("35.¿Qué estrategias de mitigación de riesgos se utilizaron durante el desarrollo del modelo? :red[*]", max_chars=LONG_STRING) #Opcional
     questions["riesgos_uso_modelo"] = st.text_area("36.¿Qué riesgos pueden estar presentes en el uso del modelo?", placeholder="Trate de identificar a los posibles receptores, la probabilidad y la magnitud de los daños. Si no se pueden determinar, indique que se consideraron pero siguen siendo desconocidos.", max_chars=LONG_STRING) 
     questions["casos_uso_conocidos"] = st.text_area("37.¿Hay casos de uso conocidos del modelo que sean especialmente problemáticos?", max_chars=LONG_STRING) #Casos de uso problematicos
     questions["otra_consideracion"] = st.text_area("38.De existir alguna otra consideración ética adicional que se haya tenido en cuenta en el desarrollo del modelo, indicar en este apartado.", placeholder="Por ejemplo, revisión por parte de un consejo externo o pruebas con una comunidad específica.", max_chars=LONG_STRING)
@@ -285,22 +303,22 @@ with tab9:
     questions["recomendaciones_adicionales_line"] = preparar_seccion_html("<strong>Recomendaciones adicionales</strong>", questions["recomendaciones_adicionales"], prefijo="<p>", sufijo="</p>")
     questions["caracteristicas_ideales_line"] = preparar_seccion_html("<strong>Características ideales del conjunto de datos</strong>", questions["caracteristicas_ideales"], prefijo="<p>", sufijo="</p>")
 with tab10:
-    st.header("TA: Reclamación 🚨")
+    st.header("  Reclamación 🚨")
 
     st.write("En caso de ser necesario apelar a una decisión del modelo, debe de existir un método establecido para hacer llegar los reclamos de los usuarios. ")
 
-    questions["TA_reclamacion"] = st.radio("43.TA: ¿Existe una vía de reclamación especial respecto de las decisiones del modelo? :red[`*`]",options=["Sí","No"]) #obligatorio pero debe tener un texto al renderizar
+    questions["TA_reclamacion"] = st.radio("43.  ¿Existe una vía de reclamación especial respecto de las decisiones del modelo? :red[*]",options=["Sí","No"]) #obligatorio pero debe tener un texto al renderizar
     questions["TA_via_reclamacion"] = None
     
     if questions["TA_reclamacion"] == "Sí":
         questions["TA_reclamacion_visible"] = True
-        questions["TA_via_reclamacion"] = st.text_area("44.TA: ¿Cuál es la forma de acceder a la vía de reclamación? :red[`*`]", max_chars=LONG_STRING) #Obligatorio
+        questions["TA_via_reclamacion"] = st.text_area("44.  ¿Cuál es la forma de acceder a la vía de reclamación? :red[*]", max_chars=LONG_STRING) #Obligatorio
         questions["TA_via_reclamacion_line"] = preparar_seccion_html("<strong>Vía de reclamación</strong>", questions["TA_via_reclamacion"], prefijo="<p>", sufijo="</p>")
     else: 
         questions["TA_reclamacion_visible"] = False
 
 
-submitted = st.button("Generar Model Card")
+submitted = st.button("Generar Ficha de transparencia")
 
 if submitted:
     # Generación del PDF
@@ -310,19 +328,20 @@ if submitted:
         st.error("No se han completado todos los campos obligatorios. Por favor, complete el campo: " + campos_verificados)  
     else:
 
-        questions["year"] = "2024" 
-        questions["elaboration_date"] = "Marzo de 2024"
+        questions["year"] = datetime.now().year
+        # Colocar el mes de elaboración
+        questions["elaboration_date"] = datetime.now().month
         try:
             print(questions)
             pdf = generate_pdf(MODEL_CARD_HTML_TEMPLATE.format_map(SafeDict(questions)))
-            st.success("Model Card generada con éxito.")
+            st.success("Ficha de transparencia generada con éxito.")
             # Botón de descarga
-            download_button(pdf, "model_card.pdf", "Descargar Model Card en PDF")
+            download_button(pdf, "ficha_transparencia.pdf", "Descargar Ficha de transparencia en PDF")
 
             guardar_en_mongodb(questions)
 
         except Exception as e:
-            st.error("Error al generar la Model Card, intentelo más tarde.")
+            st.error("Error al generar la Ficha de transparencia, intentelo más tarde.")
 
 st.sidebar.title("Agradecimientos")
 st.sidebar.write("ANID + Subdirección de Investigación Aplicada/Concurso IDeA I+D 2023 + ID23I10357")
