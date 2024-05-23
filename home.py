@@ -146,12 +146,12 @@ with tab1:
     st.header("Visión general del modelo 📊")
 
     questions["nombre_modelo"] = st.text_input("1.Nombre del modelo :red[*]", max_chars=SHORT_STRING) #Obligatorio
-    questions["tipo_modelo"] = st.text_area("2.¿Qué tipo de modelo es? :red[*] :red[antes 5]", placeholder="Esto incluye detalles básicos de la arquitectura del modelo, como si es un clasificador de Naive Bayes, una Red Neuronal Convolucional, etc. Esto es probablemente relevante para desarrolladores de software y modelos, así como para personas conocedoras de aprendizaje automático, para resaltar qué tipos de suposiciones están codificadas en el sistema.",max_chars=LONG_STRING) #Obligatorio
-    questions["proposito_modelo"] = st.text_area("3.Describa el propósito y funcionalidad del modelo :red[*] :red[antes 10]", max_chars=LONG_STRING) #Obligatorio
-    questions["TA_porque_modelo"] = st.text_area("4.*¿Por qué se decidió utilizar este SDA en lugar de otro tipo de solución?* :red[antes 11]", max_chars=LONG_STRING)
-    questions["TA_alcanzar_resultados"] = st.text_area("5.*¿Cómo el modelo alcanza u obtiene sus resultados?* :red[antes 12]",placeholder="Describa el flujo de funciomaiento de su sistema para generar un resultado" , max_chars=LONG_STRING)
-    questions["UsoPrevisto_modelo"] = st.text_area("6.¿Cuál es el uso previsto del 'modelo'? :red[*] :red[antes 13]", placeholder="¿Qué puede esperar el usuario directo del modelo al emplearlo?. Esta sección detalla si el modelo se desarrolló con tareas generales o específicas en mente. Los casos de uso pueden estar definidos de manera amplia o estrecha según lo que los desarrolladores pretendan. Por ejemplo, si el modelo se construyó simplemente para etiquetar imágenes, esta tarea debería indicarse como el caso de uso principal previsto.", max_chars=LONG_STRING) #Obligatorio
-    questions["UsosNocontext_modelo"] = st.text_area("7.¿Qué usos están fuera del alcance del modelo? :red[antes 14]", placeholder="Aquí, la ficha del modelo debería resaltar la tecnología con la que el modelo podría confundirse fácilmente, o contextos relacionados a los que los usuarios podrían intentar aplicar el modelo.", max_chars=LONG_STRING)
+    questions["tipo_modelo"] = st.text_area("2.¿Qué tipo de modelo es? :red[*] ", placeholder="Esto incluye detalles básicos de la arquitectura del modelo, como si es un clasificador de Naive Bayes, una Red Neuronal Convolucional, etc. Esto es probablemente relevante para desarrolladores de software y modelos, así como para personas conocedoras de aprendizaje automático, para resaltar qué tipos de suposiciones están codificadas en el sistema.",max_chars=LONG_STRING) #Obligatorio
+    questions["proposito_modelo"] = st.text_area("3.Describa el propósito y funcionalidad del modelo :red[*]", max_chars=LONG_STRING) #Obligatorio
+    questions["TA_porque_modelo"] = st.text_area("4.*¿Por qué se decidió utilizar este SDA en lugar de otro tipo de solución?*", max_chars=LONG_STRING)
+    questions["TA_alcanzar_resultados"] = st.text_area("5.*¿Cómo el modelo alcanza u obtiene sus resultados?*",placeholder="Describa el flujo de funciomaiento de su sistema para generar un resultado" , max_chars=LONG_STRING)
+    questions["UsoPrevisto_modelo"] = st.text_area("6.¿Cuál es el uso previsto del 'modelo'? :red[*]", placeholder="¿Qué puede esperar el usuario directo del modelo al emplearlo?. Esta sección detalla si el modelo se desarrolló con tareas generales o específicas en mente. Los casos de uso pueden estar definidos de manera amplia o estrecha según lo que los desarrolladores pretendan. Por ejemplo, si el modelo se construyó simplemente para etiquetar imágenes, esta tarea debería indicarse como el caso de uso principal previsto.", max_chars=LONG_STRING) #Obligatorio
+    questions["UsosNocontext_modelo"] = st.text_area("7.¿Qué usos están fuera del alcance del modelo?", placeholder="Aquí, la ficha del modelo debería resaltar la tecnología con la que el modelo podría confundirse fácilmente, o contextos relacionados a los que los usuarios podrían intentar aplicar el modelo.", max_chars=LONG_STRING)
 
     # Genera secciones HTML para cada sección si el valor no está vacío
 
@@ -165,9 +165,9 @@ with tab2:
     st.header("Detalles del modelo 📄")
 
     
-    questions["desarrollador_modelo"] = st.text_area("8.¿Qué persona u organización desarrolló el modelo? :red[*] :red[antes 2]", placeholder=" Esto puede ser utilizado por todas las partes interesadas para inferir detalles relacionados con el desarrollo del modelo y posibles conflictos de interés.",max_chars=SHORT_STRING)#Obligatorio
-    questions["version_modelo"] = st.text_input("9.¿Cuál es la versión del modelo? :red[antes 3]", placeholder="Describa el número de la versión del modelo. Ej: 1.0.0",max_chars=SHORT_STRING)
-    questions["fecha_modelo"] = st.date_input("10.¿Cuándo se desplegó o implementó este modelo? :red[antes 4] Esto es útil para que todas las partes interesadas se informen sobre las técnicas y fuentes de datos que probablemente estuvieron disponibles durante el desarrollo del modelo.", value=None) #Obligatorio
+    questions["desarrollador_modelo"] = st.text_area("8.¿Qué persona u organización desarrolló el modelo? :red[*] ", placeholder=" Esto puede ser utilizado por todas las partes interesadas para inferir detalles relacionados con el desarrollo del modelo y posibles conflictos de interés.",max_chars=SHORT_STRING)#Obligatorio
+    questions["version_modelo"] = st.text_input("9.¿Cuál es la versión del modelo? ", placeholder="Describa el número de la versión del modelo. Ej: 1.0.0",max_chars=SHORT_STRING)
+    questions["fecha_modelo"] = st.date_input("10.¿Cuándo se desplegó o implementó este modelo?  Esto es útil para que todas las partes interesadas se informen sobre las técnicas y fuentes de datos que probablemente estuvieron disponibles durante el desarrollo del modelo.", value=None) #Obligatorio
     if questions["fecha_modelo"] is not None: #TODO: Revisar el render de la pregunta ya que no es obligatoria
         questions["fecha_modelo"] = questions["fecha_modelo"].strftime("%d/%m/%Y")
     else:
@@ -175,10 +175,10 @@ with tab2:
 
     
 
-    questions["link_modelo"] = st.text_input("11.¿Dónde se pueden encontrar recursos para obtener información adicional del proyecto? :red[antes 6]", placeholder="Por ejemplo, link a la página institucional",max_chars=LONG_STRING)
-    questions["cita_modelo"] = st.text_area("12.¿Cómo debería citarse el modelo? :red[antes 7]", max_chars=LONG_STRING)
-    questions["licencia_modelo"] = st.text_input("13.¿Qué tipo de licencia tiene el modelo? :red[antes 8]", max_chars=SHORT_STRING)
-    questions["contacto_modelo"] = st.text_area("14.¿Hay algún canal de reclamos o sugerencias mediante los cuales las personas puedan solicitar más información? :red[antes 9]", max_chars=LONG_STRING)
+    questions["link_modelo"] = st.text_input("11.¿Dónde se pueden encontrar recursos para obtener información adicional del proyecto? ", placeholder="Por ejemplo, link a la página institucional",max_chars=LONG_STRING)
+    questions["cita_modelo"] = st.text_area("12.¿Cómo debería citarse el modelo? ", max_chars=LONG_STRING)
+    questions["licencia_modelo"] = st.text_input("13.¿Qué tipo de licencia tiene el modelo? ", max_chars=SHORT_STRING)
+    questions["contacto_modelo"] = st.text_area("14.¿Hay algún canal de reclamos o sugerencias mediante los cuales las personas puedan solicitar más información? ", max_chars=LONG_STRING)
 
     # Genera secciones HTML para cada sección si el valor no está vacío y si no son obligatorios
 
